@@ -1,0 +1,61 @@
+# ======================================
+# Global ignores
+# ======================================
+.DS_Store
+Thumbs.db
+*.log
+*.swp
+*.swo
+*.tmp
+*.bak
+*.old
+*.env
+
+# Logs
+logs/
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Test and coverage reports
+coverage/
+lcov-report/
+test-results/
+TestResults/
+
+# ======================================
+# Rider / JetBrains
+# ======================================
+.idea/
+*.iml
+
+# ======================================
+# Backend - ASP.NET Core
+# ======================================
+src/backend/bin/
+src/backend/obj/
+src/backend/*.pdb
+src/backend/*.db
+src/backend/*.db-shm
+src/backend/*.db-wal
+src/backend/secrets.json
+
+# ======================================
+# Frontend - Angular
+# ======================================
+src/frontend/node_modules/
+src/frontend/dist/
+src/frontend/tmp/
+src/frontend/out-tsc/
+src/frontend/.angular/
+src/frontend/package-lock.json
+src/frontend/yarn.lock
+src/frontend/.env
+
+# ======================================
+# Docker
+# ======================================
+docker/*.tar
+docker/*.img
+docker/*.container
+docker-compose.override.yml
