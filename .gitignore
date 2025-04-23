@@ -32,13 +32,15 @@ TestResults/
 # ======================================
 # Backend - ASP.NET Core
 # ======================================
-src/BudgetBeavers.API/bin/
-src/BudgetBeavers.API/obj/
-src/BudgetBeavers.API/*.pdb
-src/BudgetBeavers.API/*.db
-src/BudgetBeavers.API/*.db-shm
-src/BudgetBeavers.API/*.db-wal
-src/BudgetBeavers.API/secrets.json
+# Ignore bin and obj folders across all projects in the solution
+**/bin/
+**/obj/
+
+# Ignore build files (e.g., .pdb, .db files, etc.)
+**/*.pdb
+**/*.db
+**/*.db-shm
+**/*.db-wal
 
 # ======================================
 # Frontend - Angular
