@@ -32,25 +32,25 @@ TestResults/
 # ======================================
 # Backend - ASP.NET Core
 # ======================================
-src/backend/bin/
-src/backend/obj/
-src/backend/*.pdb
-src/backend/*.db
-src/backend/*.db-shm
-src/backend/*.db-wal
-src/backend/secrets.json
+src/BudgetBeavers.API/bin/
+src/BudgetBeavers.API/obj/
+src/BudgetBeavers.API/*.pdb
+src/BudgetBeavers.API/*.db
+src/BudgetBeavers.API/*.db-shm
+src/BudgetBeavers.API/*.db-wal
+src/BudgetBeavers.API/secrets.json
 
 # ======================================
 # Frontend - Angular
 # ======================================
-src/frontend/node_modules/
-src/frontend/dist/
-src/frontend/tmp/
-src/frontend/out-tsc/
-src/frontend/.angular/
-src/frontend/package-lock.json
-src/frontend/yarn.lock
-src/frontend/.env
+src/BudgetBeavers.UI/node_modules/
+src/BudgetBeavers.UI/dist/
+src/BudgetBeavers.UI/tmp/
+src/BudgetBeavers.UI/out-tsc/
+src/BudgetBeavers.UI/.angular/
+src/BudgetBeavers.UI/package-lock.json
+src/BudgetBeavers.UI/yarn.lock
+src/BudgetBeavers.UI/.env
 
 # ======================================
 # Docker
