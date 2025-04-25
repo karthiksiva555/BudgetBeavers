@@ -1,0 +1,6 @@
+#@BudgetBeavers.API_HostAddress = http://localhost:5209
+#
+#GET {{BudgetBeavers.API_HostAddress}}/weatherforecast/
+#Accept: application/json
+
+###

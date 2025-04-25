@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BudgetBeavers.Core", "Budge
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BudgetBeavers.Persistence", "BudgetBeavers.Persistence\BudgetBeavers.Persistence.csproj", "{0C347279-F1B6-44D6-9F89-7797C26C89A3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BudgetBeavers.API", "BudgetBeavers.API\BudgetBeavers.API.csproj", "{B69E313D-45D0-421B-9FB2-1E4C093013BB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{0C347279-F1B6-44D6-9F89-7797C26C89A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0C347279-F1B6-44D6-9F89-7797C26C89A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0C347279-F1B6-44D6-9F89-7797C26C89A3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B69E313D-45D0-421B-9FB2-1E4C093013BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B69E313D-45D0-421B-9FB2-1E4C093013BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B69E313D-45D0-421B-9FB2-1E4C093013BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B69E313D-45D0-421B-9FB2-1E4C093013BB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
