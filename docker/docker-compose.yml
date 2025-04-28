@@ -1,0 +1,14 @@
+
+services:
+  database:
+    image: postgres:17.4
+    container_name: budgetbeavers_db
+    ports:
+      - "5432:5432"
+    env_file:
+      - .env
+    volumes:
+      - budget-beavers-db-data:/var/lib/postgresql/data
+
+volumes:
+  budget-beavers-db-data:

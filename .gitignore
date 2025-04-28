@@ -61,3 +61,4 @@ docker/*.tar
 docker/*.img
 docker/*.container
 docker-compose.override.yml
+.env
