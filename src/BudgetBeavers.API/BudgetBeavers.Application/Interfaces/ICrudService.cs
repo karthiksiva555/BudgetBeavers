@@ -1,3 +1,7 @@
 namespace BudgetBeavers.Application.Interfaces;
 
-public interface ICrudService<T>: IAddService<T>, IUpdateService<T>, IDeleteService<T>, IGetService<T> where T : class;
+public interface ICrudService<in TCreateDto, in TUpdateDto, TGetDto> : IAddService<TCreateDto, TGetDto>, IUpdateService<TUpdateDto>,
+    IDeleteService, IGetService<TGetDto>
+    where TCreateDto : class
+    where TUpdateDto : class
+    where TGetDto : class;

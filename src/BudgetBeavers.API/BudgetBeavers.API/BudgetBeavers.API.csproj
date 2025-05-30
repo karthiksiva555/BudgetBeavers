@@ -16,6 +16,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\BudgetBeavers.Application\BudgetBeavers.Application.csproj" />
       <ProjectReference Include="..\BudgetBeavers.Persistence\BudgetBeavers.Persistence.csproj" />
     </ItemGroup>
 

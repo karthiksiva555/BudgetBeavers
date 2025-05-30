@@ -1,6 +1,6 @@
 namespace BudgetBeavers.Application.Interfaces;
 
-public interface IDeleteService<T> where T : class
+public interface IDeleteService
 {
     Task DeleteAsync(Guid id);
 }

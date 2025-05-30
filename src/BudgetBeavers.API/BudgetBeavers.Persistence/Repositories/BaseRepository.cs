@@ -11,11 +11,12 @@ public abstract class BaseRepository<TEntity>(BudgetBeaversDbContext budgetBeave
         return budgetBeaversDb.Set<TEntity>().FindAsync(id);
     }
 
-    public async Task AddAsync(TEntity entity)
+    public async Task<TEntity> AddAsync(TEntity entity)
     {
         ValidateEntity(entity);
         await budgetBeaversDb.Set<TEntity>().AddAsync(entity);
         await SaveAsync();
+        return entity;
     }
 
     public async Task UpdateAsync(TEntity entity)

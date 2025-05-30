@@ -1,26 +1,29 @@
+using BudgetBeavers.Application.Dtos.HomeDtos;
 using BudgetBeavers.Application.Interfaces;
 using BudgetBeavers.Application.Utilities;
-using BudgetBeavers.Core.Entities;
 using BudgetBeavers.Core.Interfaces;
 
 namespace BudgetBeavers.Application.Services;
 
 public class HomeService(IHomeRepository homeRepository) : IHomeService
 {
-    public Task AddAsync(Home home)
+    public async Task<HomeDto> AddAsync(CreateHomeDto createHomeDto)
     {
-        Guard.AgainstNull(home, nameof(home));
-        Guard.AgainstNullOrWhiteSpace(home.Name, nameof(home.Name));
-        
-        return homeRepository.AddAsync(home);
+        Guard.AgainstNull(createHomeDto, nameof(createHomeDto));
+        Guard.AgainstNullOrWhiteSpace(createHomeDto.Name, nameof(createHomeDto.Name));
+
+        var home = createHomeDto.ToEntity();
+        var createdHome = await homeRepository.AddAsync(home);
+        return createdHome.ToDto();
     }
 
-    public Task UpdateAsync(Home home)
+    public Task UpdateAsync(UpdateHomeDto updateHomeDto)
     {
-        Guard.AgainstNull(home, nameof(home));
-        Guard.AgainstNullOrWhiteSpace(home.Name, nameof(home.Name));
-        Guard.AgainstEmptyGuid(home.Id, nameof(home.Id));
+        Guard.AgainstNull(updateHomeDto, nameof(updateHomeDto));
+        Guard.AgainstNullOrWhiteSpace(updateHomeDto.Name, nameof(updateHomeDto.Name));
+        Guard.AgainstEmptyGuid(updateHomeDto.Id, nameof(updateHomeDto.Id));
         
+        var home = updateHomeDto.ToEntity();
         return homeRepository.UpdateAsync(home);
     }
 
@@ -31,10 +34,16 @@ public class HomeService(IHomeRepository homeRepository) : IHomeService
         return homeRepository.DeleteAsync(id);
     }
 
-    public ValueTask<Home?> GetByIdAsync(Guid id)
+    public async ValueTask<HomeDto?> GetByIdAsync(Guid id)
     {
         Guard.AgainstEmptyGuid(id, nameof(id));
         
-        return homeRepository.GetByIdAsync(id);
+        var home = await homeRepository.GetByIdAsync(id);
+        if (home == null)
+        {
+            throw new KeyNotFoundException($"Home not found with the provided ID {id}.");
+        }
+        
+        return home.ToDto();
     }
 }
