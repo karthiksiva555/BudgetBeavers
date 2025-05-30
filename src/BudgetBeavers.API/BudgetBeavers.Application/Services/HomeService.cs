@@ -26,11 +26,15 @@ public class HomeService(IHomeRepository homeRepository) : IHomeService
 
     public Task DeleteAsync(Guid id)
     {
+        Guard.AgainstEmptyGuid(id, nameof(id));
+        
         return homeRepository.DeleteAsync(id);
     }
 
     public ValueTask<Home?> GetByIdAsync(Guid id)
     {
+        Guard.AgainstEmptyGuid(id, nameof(id));
+        
         return homeRepository.GetByIdAsync(id);
     }
 }
