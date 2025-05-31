@@ -17,32 +17,36 @@ public class HomeService(IHomeRepository homeRepository) : IHomeService
         return createdHome.ToDto();
     }
 
-    public Task UpdateAsync(UpdateHomeDto updateHomeDto)
+    public async Task<HomeDto> UpdateAsync(Guid id, UpdateHomeDto updateHomeDto)
     {
         Guard.AgainstNull(updateHomeDto, nameof(updateHomeDto));
         Guard.AgainstNullOrWhiteSpace(updateHomeDto.Name, nameof(updateHomeDto.Name));
-        Guard.AgainstEmptyGuid(updateHomeDto.Id, nameof(updateHomeDto.Id));
-        
-        var home = updateHomeDto.ToEntity();
-        return homeRepository.UpdateAsync(home);
-    }
-
-    public Task DeleteAsync(Guid id)
-    {
         Guard.AgainstEmptyGuid(id, nameof(id));
         
-        return homeRepository.DeleteAsync(id);
+        var existingHome = await homeRepository.GetByIdAsync(id);
+        Guard.AgainstKeyNotFound(existingHome, id, nameof(id));
+        
+        existingHome.Name = updateHomeDto.Name;
+        
+        await homeRepository.UpdateAsync(existingHome);
+        
+        return existingHome.ToDto();
+    }
+
+    public async Task DeleteAsync(Guid id)
+    {
+        Guard.AgainstEmptyGuid(id, nameof(id));
+        var home = await homeRepository.GetByIdAsync(id);
+        Guard.AgainstKeyNotFound(home, id, nameof(id));
+        
+        await homeRepository.DeleteAsync(home);
     }
 
     public async ValueTask<HomeDto?> GetByIdAsync(Guid id)
     {
         Guard.AgainstEmptyGuid(id, nameof(id));
-        
         var home = await homeRepository.GetByIdAsync(id);
-        if (home == null)
-        {
-            throw new KeyNotFoundException($"Home not found with the provided ID {id}.");
-        }
+        Guard.AgainstKeyNotFound(home, id, nameof(id));
         
         return home.ToDto();
     }

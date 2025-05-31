@@ -28,4 +28,11 @@ public class HomeController(IHomeService homeService) : ControllerBase
         var createdHome = await homeService.AddAsync(createHomeDto);
         return CreatedAtAction(nameof(GetHomeById), new { id = createdHome.Id }, createdHome);
     }
+    
+    [HttpPut("{id:guid}")]
+    public async Task<IActionResult> UpdateHome(Guid id, [FromBody] UpdateHomeDto updateHomeDto)
+    {
+        var updatedHome = await homeService.UpdateAsync(id, updateHomeDto);
+        return Ok(updatedHome);
+    }
 }
