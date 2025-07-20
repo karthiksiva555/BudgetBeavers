@@ -11,6 +11,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BudgetBeavers.API", "Budget
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BudgetBeavers.Application", "BudgetBeavers.Application\BudgetBeavers.Application.csproj", "{355E6D6E-0993-469F-80FB-18D83CDE9909}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{A9E9147C-4B7B-4E89-B3E8-F3181D825C40}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BudgetBeavers.Application.Tests", "BudgetBeavers.Application.Tests\BudgetBeavers.Application.Tests.csproj", "{3BEB4782-B88D-43C4-BC99-59824DC7309B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +40,12 @@ Global
 		{355E6D6E-0993-469F-80FB-18D83CDE9909}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{355E6D6E-0993-469F-80FB-18D83CDE9909}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{355E6D6E-0993-469F-80FB-18D83CDE9909}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3BEB4782-B88D-43C4-BC99-59824DC7309B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3BEB4782-B88D-43C4-BC99-59824DC7309B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3BEB4782-B88D-43C4-BC99-59824DC7309B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3BEB4782-B88D-43C4-BC99-59824DC7309B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{3BEB4782-B88D-43C4-BC99-59824DC7309B} = {A9E9147C-4B7B-4E89-B3E8-F3181D825C40}
 	EndGlobalSection
 EndGlobal
