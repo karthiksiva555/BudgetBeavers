@@ -149,4 +149,105 @@ public class HomeServiceTests : TestBase
     }
     
     #endregion
+    
+    #region DeleteAsync
+    
+    [Fact]
+    public async Task DeleteAsync_HomeIdIsEmpty_ThrowsArgumentExceptionAsync()
+    {
+        // Act  
+        var act = async () => await _homeService.DeleteAsync(Guid.Empty);
+        
+        // Assert
+        await act.Should().ThrowAsync<ArgumentException>()
+            .WithParameterName("id")
+            .Where(e => e.Message.Contains("cannot be empty."));
+    }
+    
+    [Fact]
+    public async Task DeleteAsync_HomeDoesNotExist_ThrowsKeyNotFoundExceptionAsync()
+    {
+        // Arrange
+        var homeId = Guid.NewGuid();
+
+        _homeRepositoryMock.Setup(repo => repo.GetByIdAsync(homeId))
+            .ReturnsAsync((Home?)null);
+
+        // Act
+        var act = async () => await _homeService.DeleteAsync(homeId);
+        
+        // Assert
+        await act.Should().ThrowAsync<KeyNotFoundException>()
+            .WithMessage($"No entity found with the provided id: {homeId}.");
+    }
+
+    [Fact]
+    public async Task DeleteAsync_ValidHomeIdAndDto_DeletesHomeAndReturnsDtoAsync()
+    {
+        // Arrange
+        var homeId = Guid.NewGuid();
+        var home = new Home { Id = homeId, Name = "Test Home", CreatedAt = DateTime.UtcNow.AddDays(-10) };
+        _homeRepositoryMock.Setup(repo => repo.GetByIdAsync(homeId))
+            .ReturnsAsync(home);
+        _homeRepositoryMock.Setup(repo => repo.DeleteAsync(It.IsAny<Home>()))
+            .Returns(Task.CompletedTask);
+        
+        // Act
+        await _homeService.DeleteAsync(homeId);
+        
+        // Assert
+        _homeRepositoryMock.Verify(repo => repo.DeleteAsync(It.Is<Home>(h => h.Id == homeId)), Times.Once);
+    }
+    
+    #endregion
+    
+    #region GetByIdAsync
+    
+    [Fact]
+    public async Task GetByIdAsync_HomeIdIsEmpty_ThrowsArgumentExceptionAsync()
+    {
+        // Act
+        var act = async () => await _homeService.GetByIdAsync(Guid.Empty);
+        
+        // Assert
+        await act.Should().ThrowAsync<ArgumentException>()
+            .WithParameterName("id")
+            .Where(e => e.Message.Contains("cannot be empty."));
+    }
+    
+    [Fact]
+    public async Task GetByIdAsync_HomeDoesNotExist_ThrowsKeyNotFoundExceptionAsync()
+    {
+        // Arrange
+        var homeId = Guid.NewGuid();
+        _homeRepositoryMock.Setup(repo => repo.GetByIdAsync(homeId))
+            .ReturnsAsync((Home?)null);
+        
+        // Act
+        var act = async () => await _homeService.GetByIdAsync(homeId);
+        
+        // Assert
+        await act.Should().ThrowAsync<KeyNotFoundException>()
+            .WithMessage($"No entity found with the provided id: {homeId}.");
+    }
+    
+    [Fact]
+    public async Task GetByIdAsync_ValidHomeId_ReturnsHomeDtoAsync()
+    {
+        // Arrange
+        var homeId = Guid.NewGuid();
+        var home = new Home { Id = homeId, Name = "Test Home", CreatedAt = DateTime.UtcNow.AddDays(-10) };
+        var expectedHomeDto = home.ToDto();
+        
+        _homeRepositoryMock.Setup(repo => repo.GetByIdAsync(homeId))
+            .ReturnsAsync(home);
+        
+        // Act
+        var result = await _homeService.GetByIdAsync(homeId);
+        
+        // Assert
+        result.Should().BeEquivalentTo(expectedHomeDto);
+    }
+    
+    #endregion
 }
