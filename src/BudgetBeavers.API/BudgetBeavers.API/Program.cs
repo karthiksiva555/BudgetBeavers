@@ -1,4 +1,9 @@
+using BudgetBeavers.API.Extensions;
+using BudgetBeavers.Application.Interfaces;
+using BudgetBeavers.Application.Services;
+using BudgetBeavers.Core.Interfaces;
 using BudgetBeavers.Persistence;
+using BudgetBeavers.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace BudgetBeavers.API;
@@ -17,6 +22,10 @@ public class Program
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
+        
+        // Register application services
+        builder.Services.AddScoped<IHomeRepository, HomeRepository>();
+        builder.Services.AddScoped<IHomeService, HomeService>();
 
         var app = builder.Build();
 
@@ -25,6 +34,7 @@ public class Program
         {
             app.UseSwagger();
             app.UseSwaggerUI();
+            app.ApplyDatabaseMigrations();
         }
 
         app.UseHttpsRedirection();
