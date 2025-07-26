@@ -26,6 +26,9 @@ public class Program
         // Register application services
         builder.Services.AddScoped<IHomeRepository, HomeRepository>();
         builder.Services.AddScoped<IHomeService, HomeService>();
+        
+        builder.Services.AddScoped<IUserRepository, UserRepository>();
+        builder.Services.AddScoped<IUserService, UserService>();
 
         var app = builder.Build();
 
