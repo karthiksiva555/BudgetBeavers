@@ -9,12 +9,6 @@ public class User : BaseEntity
     public string Email { get; set; } = string.Empty;
     
     public string PasswordHash { get; set; } = string.Empty;
-
-    public Guid HomeId { get; set; }
     
-    public required Home Home { get; set; }
-
-    public Guid RoleId { get; set; }
-
-    public required Role Role { get; set; }
+    public string? PhoneNumber { get; set; }
 }
