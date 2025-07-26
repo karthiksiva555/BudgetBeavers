@@ -11,4 +11,6 @@ public class User : BaseEntity
     public string PasswordHash { get; set; } = string.Empty;
     
     public string? PhoneNumber { get; set; }
+    
+    public ICollection<HomeUser> HomeUsers { get; set; } = new List<HomeUser>();
 }

@@ -8,6 +8,7 @@ public class BudgetBeaversDbContext(DbContextOptions<BudgetBeaversDbContext> opt
     public DbSet<Home> Homes => Set<Home>();
     public DbSet<User> Users => Set<User>();
     public DbSet<Role> Roles => Set<Role>();
+    public DbSet<HomeUser> HomeUsers => Set<HomeUser>();
     public DbSet<TransactionCategory> TransactionCategories => Set<TransactionCategory>();
     public DbSet<Transaction> Transactions => Set<Transaction>();
 
