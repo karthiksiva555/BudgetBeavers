@@ -1,8 +1,8 @@
 namespace BudgetBeavers.Application.Interfaces;
 
-public interface IUpdateService<in TUpdateHomeDto, THomeDto> 
-    where TUpdateHomeDto : class
-    where THomeDto : class
+public interface IUpdateService<in TUpdateDto, TDto> 
+    where TUpdateDto : class
+    where TDto : class
 {
-    Task<THomeDto> UpdateAsync(Guid id, TUpdateHomeDto updateHomeDto);
+    Task<TDto> UpdateAsync(Guid id, TUpdateDto updateHomeDto);
 }

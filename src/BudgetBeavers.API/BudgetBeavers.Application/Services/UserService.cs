@@ -18,7 +18,7 @@ public class UserService(IUserRepository userRepository): IUserService
         throw new NotImplementedException();
     }
 
-    public Task<UserDto> UpdateAsync(Guid id, UpdateUserDto updateHomeDto)
+    public Task<UserDto> UpdateAsync(Guid id, UpdateUserDto updateUserDto)
     {
         throw new NotImplementedException();
     }

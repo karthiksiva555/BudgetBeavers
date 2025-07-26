@@ -1,6 +1,6 @@
 namespace BudgetBeavers.Application.Interfaces;
 
-public interface IAddService<in TCreateDto, THomeDto> where TCreateDto : class where THomeDto : class
+public interface IAddService<in TCreateDto, TDto> where TCreateDto : class where TDto : class
 {
-    Task<THomeDto> AddAsync(TCreateDto createHomeDto);
+    Task<TDto> AddAsync(TCreateDto createUserDto);
 }

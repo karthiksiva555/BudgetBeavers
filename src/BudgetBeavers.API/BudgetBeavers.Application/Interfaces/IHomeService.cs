@@ -1,5 +1,4 @@
 using BudgetBeavers.Application.Dtos.HomeDtos;
-using BudgetBeavers.Core.Entities;
 
 namespace BudgetBeavers.Application.Interfaces;
 
