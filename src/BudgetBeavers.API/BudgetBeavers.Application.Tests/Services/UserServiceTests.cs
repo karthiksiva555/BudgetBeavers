@@ -12,11 +12,12 @@ namespace BudgetBeavers.Application.Tests.Services;
 public class UserServiceTests : TestBase
 {
     private readonly Mock<IUserRepository> _userRepository = new();
+    private readonly Mock<IPasswordService> _passwordService = new();
     private readonly IUserService _userService;
 
     public UserServiceTests()
     {
-        _userService = new UserService(_userRepository.Object);
+        _userService = new UserService(_userRepository.Object, _passwordService.Object);
     }
     
     #region AddAsync
@@ -96,6 +97,34 @@ public class UserServiceTests : TestBase
         await act.Should().ThrowAsync<ArgumentException>()
             .WithParameterName(nameof(createUserDto.Email))
             .Where(e => e.Message.Contains("cannot be null or whitespace."));
+    }
+    
+    [Fact]
+    public async Task AddAsync_CreateUserDtoIsValid_ReturnsUserDtoAsync()
+    {
+        // Arrange
+        var createUserDto = Fixture.Create<CreateUserDto>();
+        var user = createUserDto.ToEntity();
+        user.Id = Guid.NewGuid();
+        user.PasswordHash = "hashedPassword";
+        
+        _userRepository.Setup(repo => repo.AddAsync(It.IsAny<Core.Entities.User>()))
+            .ReturnsAsync(user);
+        
+        _passwordService.Setup(ps => ps.HashPassword(createUserDto.Password))
+            .Returns("hashedPassword");
+        
+        // Act
+        var result = await _userService.AddAsync(createUserDto);
+        
+        // Assert
+        result.Should().NotBeNull();
+        result.Id.Should().Be(user.Id);
+        result.FirstName.Should().Be(createUserDto.FirstName);
+        result.LastName.Should().Be(createUserDto.LastName);
+        result.Email.Should().Be(createUserDto.Email);
+        result.PhoneNumber.Should().Be(createUserDto.PhoneNumber);
+        _passwordService.Verify(p => p.HashPassword(createUserDto.Password), Times.Once);
     }
     
     #endregion

@@ -5,9 +5,9 @@ using BudgetBeavers.Core.Interfaces;
 
 namespace BudgetBeavers.Application.Services;
 
-public class UserService(IUserRepository userRepository): IUserService
+public class UserService(IUserRepository userRepository, IPasswordService passwordService): IUserService
 {
-    public Task<UserDto> AddAsync(CreateUserDto createUserDto)
+    public async Task<UserDto> AddAsync(CreateUserDto createUserDto)
     {
         Guard.AgainstNull(createUserDto, nameof(createUserDto));
         Guard.AgainstNullOrWhiteSpace(createUserDto.FirstName, nameof(createUserDto.FirstName));
@@ -15,7 +15,11 @@ public class UserService(IUserRepository userRepository): IUserService
         Guard.AgainstNullOrWhiteSpace(createUserDto.Email, nameof(createUserDto.Email));
         Guard.AgainstNullOrWhiteSpace(createUserDto.Password, nameof(createUserDto.Password));
         
-        throw new NotImplementedException();
+        var user = createUserDto.ToEntity();
+        user.PasswordHash = passwordService.HashPassword(createUserDto.Password);
+        
+        var createdUser = await userRepository.AddAsync(user);
+        return createdUser.ToDto();
     }
 
     public Task<UserDto> UpdateAsync(Guid id, UpdateUserDto updateUserDto)
