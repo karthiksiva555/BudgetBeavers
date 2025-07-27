@@ -272,4 +272,54 @@ public class UserServiceTests : TestBase
     }
     
     #endregion
+
+    #region GetByIdAsync
+
+    [Fact]
+    public async Task GetByIdAsync_UserIdIsEmpty_ThrowsArgumentExceptionAsync()
+    {
+        var act = async () => await _userService.GetByIdAsync(Guid.Empty);
+        
+        await act.Should().ThrowAsync<ArgumentException>()
+            .WithParameterName("id")
+            .Where(e => e.Message.Contains("cannot be empty."));
+    }
+
+    [Fact]
+    public async Task GetByIdAsync_UserDoesNotExist_ThrowsKeyNotFoundExceptionAsync()
+    {
+        var userId = Guid.NewGuid();
+        
+        _userRepository.Setup(repo => repo.GetByIdAsync(userId))
+            .ReturnsAsync((User?)null);
+        
+        var act = async () => await _userService.GetByIdAsync(userId);
+        
+        await act.Should().ThrowAsync<KeyNotFoundException>()
+            .WithMessage($"No entity found with the provided id: {userId}.");
+    }
+
+    [Fact]
+    public async Task GetByIdAsync_UserExists_ReturnsUpdatedUserDtoAsync()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var existingUser = Fixture.Build<User>().With(u => u.Id, userId).Create();
+        
+        _userRepository.Setup(repo => repo.GetByIdAsync(userId))
+            .ReturnsAsync(existingUser);
+        
+        // Act
+        var result = await _userService.GetByIdAsync(userId);
+        
+        // Assert
+        result.Should().NotBeNull();
+        result.Id.Should().Be(userId);
+        result.FirstName.Should().Be(existingUser.FirstName);
+        result.LastName.Should().Be(existingUser.LastName);
+        result.Email.Should().Be(existingUser.Email);
+        result.PhoneNumber.Should().Be(existingUser.PhoneNumber);
+    }
+    
+    #endregion
 }
