@@ -128,4 +128,111 @@ public class UserServiceTests : TestBase
     }
     
     #endregion
+
+    #region UpdateAsync
+
+    [Fact]
+    public async Task UpdateAsync_UpdateUserDtoIsNull_ThrowsArgumentNullExceptionAsync()
+    {
+        Func<Task> act = async () => await _userService.UpdateAsync(Guid.NewGuid(), null!);
+        
+        await act.Should().ThrowAsync<ArgumentNullException>()
+            .WithParameterName("updateUserDto");
+    }
+    
+    [Fact]
+    public async Task UpdateAsync_UserIdIsEmpty_ThrowsArgumentExceptionAsync()
+    {
+        var updateUserDto = Fixture.Create<UpdateUserDto>();
+        
+        Func<Task> act = async () => await _userService.UpdateAsync(Guid.Empty, updateUserDto);
+        
+        await act.Should().ThrowAsync<ArgumentException>()
+            .WithParameterName("id")
+            .Where(e => e.Message.Contains("cannot be empty."));
+    }
+
+    [Xunit.Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    public async Task UpdateAsync_FirstNameIsInvalid_ThrowsArgumentExceptionAsync(string? firstName)
+    {
+        // Arrange
+        var updateUserDto = Fixture.Build<UpdateUserDto>().With(u => u.FirstName, firstName).Create();
+        
+        // Act
+        Func<Task> act = async () => await _userService.UpdateAsync(Guid.NewGuid(), updateUserDto);
+        
+        // Assert
+        await act.Should().ThrowAsync<ArgumentException>()
+            .WithParameterName(nameof(updateUserDto.FirstName))
+            .Where(e => e.Message.Contains("cannot be null or whitespace."));
+    }
+    
+    [Xunit.Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    public async Task UpdateAsync_LastNameIsInvalid_ThrowsArgumentExceptionAsync(string? lastName)
+    {
+        // Arrange
+        var updateUserDto = Fixture.Build<UpdateUserDto>().With(u => u.LastName, lastName).Create();
+        
+        // Act
+        Func<Task> act = async () => await _userService.UpdateAsync(Guid.NewGuid(), updateUserDto);
+        
+        // Assert
+        await act.Should().ThrowAsync<ArgumentException>()
+            .WithParameterName(nameof(updateUserDto.LastName))
+            .Where(e => e.Message.Contains("cannot be null or whitespace."));
+    }
+    
+    [Fact]
+    public async Task UpdateAsync_UserDoesNotExist_ThrowsKeyNotFoundExceptionAsync()
+    {
+        var updateUserDto = Fixture.Create<UpdateUserDto>();
+        var userId = Guid.NewGuid();
+        
+        _userRepository.Setup(repo => repo.GetByIdAsync(userId))
+            .ReturnsAsync((Core.Entities.User?)null);
+        
+        Func<Task> act = async () => await _userService.UpdateAsync(userId, updateUserDto);
+        
+        await act.Should().ThrowAsync<KeyNotFoundException>()
+            .WithMessage($"No entity found with the provided id:'{userId}'.");
+    }
+
+    [Fact]
+    public async Task UpdateAsync_UserExists_ReturnsUpdatedUserDtoAsync()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var updateUserDto = Fixture.Create<UpdateUserDto>();
+
+        var existingUser = new Core.Entities.User
+        {
+            Id = userId,
+            FirstName = "OldFirstName",
+            LastName = "OldLastName",
+            Email = "testemail@test.com",
+            PhoneNumber = "1234567890",
+            PasswordHash = "oldPasswordHash"
+        };
+
+        _userRepository.Setup(u => u.GetByIdAsync(userId))
+            .ReturnsAsync(existingUser);
+        
+        // Act
+        var result = await _userService.UpdateAsync(userId, updateUserDto);
+        
+        // Assert
+        result.Should().NotBeNull();
+        result.Id.Should().Be(userId);
+        result.FirstName.Should().Be(updateUserDto.FirstName);
+        result.LastName.Should().Be(updateUserDto.LastName);
+        result.Email.Should().Be(existingUser.Email);
+        result.PhoneNumber.Should().Be(updateUserDto.PhoneNumber);
+        _userRepository.Verify(u => u.UpdateAsync(It.IsAny<Core.Entities.User>()), Times.Once);
+    }
+
+    #endregion
 }
