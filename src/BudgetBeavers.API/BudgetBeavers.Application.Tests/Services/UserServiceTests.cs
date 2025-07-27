@@ -198,7 +198,7 @@ public class UserServiceTests : TestBase
         Func<Task> act = async () => await _userService.UpdateAsync(userId, updateUserDto);
         
         await act.Should().ThrowAsync<KeyNotFoundException>()
-            .WithMessage($"No entity found with the provided id:'{userId}'.");
+            .WithMessage($"No entity found with the provided id: {userId}.");
     }
 
     [Fact]

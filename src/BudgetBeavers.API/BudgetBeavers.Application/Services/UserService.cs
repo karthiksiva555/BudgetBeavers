@@ -22,14 +22,23 @@ public class UserService(IUserRepository userRepository, IPasswordService passwo
         return createdUser.ToDto();
     }
 
-    public Task<UserDto> UpdateAsync(Guid id, UpdateUserDto updateUserDto)
+    public async Task<UserDto> UpdateAsync(Guid id, UpdateUserDto updateUserDto)
     {
         Guard.AgainstNull(updateUserDto, nameof(updateUserDto));
         Guard.AgainstEmptyGuid(id, nameof(id));
         Guard.AgainstNullOrWhiteSpace(updateUserDto.FirstName, nameof(updateUserDto.FirstName));
         Guard.AgainstNullOrWhiteSpace(updateUserDto.LastName, nameof(updateUserDto.LastName));
         
-        throw new NotImplementedException();
+        var existingUser = await userRepository.GetByIdAsync(id);
+        Guard.AgainstKeyNotFound(existingUser, id, nameof(id));
+        
+        existingUser.FirstName = updateUserDto.FirstName;
+        existingUser.LastName = updateUserDto.LastName;
+        existingUser.PhoneNumber = updateUserDto.PhoneNumber;
+        
+        await userRepository.UpdateAsync(existingUser);
+        
+        return existingUser.ToDto();
     }
 
     public Task DeleteAsync(Guid id)
