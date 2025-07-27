@@ -24,6 +24,11 @@ public class UserService(IUserRepository userRepository, IPasswordService passwo
 
     public Task<UserDto> UpdateAsync(Guid id, UpdateUserDto updateUserDto)
     {
+        Guard.AgainstNull(updateUserDto, nameof(updateUserDto));
+        Guard.AgainstEmptyGuid(id, nameof(id));
+        Guard.AgainstNullOrWhiteSpace(updateUserDto.FirstName, nameof(updateUserDto.FirstName));
+        Guard.AgainstNullOrWhiteSpace(updateUserDto.LastName, nameof(updateUserDto.LastName));
+        
         throw new NotImplementedException();
     }
 
