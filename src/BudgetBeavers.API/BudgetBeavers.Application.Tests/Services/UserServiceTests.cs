@@ -2,6 +2,7 @@ using AutoFixture;
 using BudgetBeavers.Application.Dtos.UserDtos;
 using BudgetBeavers.Application.Interfaces;
 using BudgetBeavers.Application.Services;
+using BudgetBeavers.Core.Entities;
 using BudgetBeavers.Core.Interfaces;
 using FluentAssertions;
 using Moq;
@@ -207,16 +208,7 @@ public class UserServiceTests : TestBase
         // Arrange
         var userId = Guid.NewGuid();
         var updateUserDto = Fixture.Create<UpdateUserDto>();
-
-        var existingUser = new Core.Entities.User
-        {
-            Id = userId,
-            FirstName = "OldFirstName",
-            LastName = "OldLastName",
-            Email = "testemail@test.com",
-            PhoneNumber = "1234567890",
-            PasswordHash = "oldPasswordHash"
-        };
+        var existingUser = Fixture.Build<Core.Entities.User>().With(u => u.Id, userId).Create();
 
         _userRepository.Setup(u => u.GetByIdAsync(userId))
             .ReturnsAsync(existingUser);
@@ -234,5 +226,50 @@ public class UserServiceTests : TestBase
         _userRepository.Verify(u => u.UpdateAsync(It.IsAny<Core.Entities.User>()), Times.Once);
     }
 
+    #endregion
+
+    #region DeleteAsync
+
+    [Fact]
+    public async Task DeleteAsync_UserIdIsEmpty_ThrowsArgumentExceptionAsync()
+    {
+        Func<Task> act = async () => await _userService.DeleteAsync(Guid.Empty);
+        
+        await act.Should().ThrowAsync<ArgumentException>()
+            .WithParameterName("id")
+            .Where(e => e.Message.Contains("cannot be empty."));
+    }
+
+    [Fact]
+    public async Task DeleteAsync_UserDoesNotExist_ThrowsKeyNotFoundExceptionAsync()
+    {
+        var userId = Guid.NewGuid();
+        
+        _userRepository.Setup(repo => repo.GetByIdAsync(userId))
+            .ReturnsAsync((Core.Entities.User?)null);
+        
+        Func<Task> act = async () => await _userService.DeleteAsync(userId);
+        
+        await act.Should().ThrowAsync<KeyNotFoundException>()
+            .WithMessage($"No entity found with the provided id: {userId}.");
+    }
+    
+    [Fact]
+    public async Task DeleteAsync_UserExists_DeletesUserAsync()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var existingUser = Fixture.Build<User>().With(u => u.Id, userId).Create();
+        
+        _userRepository.Setup(repo => repo.GetByIdAsync(userId))
+            .ReturnsAsync(existingUser);
+        
+        // Act
+        await _userService.DeleteAsync(userId);
+        
+        // Assert
+        _userRepository.Verify(repo => repo.DeleteAsync(existingUser), Times.Once);
+    }
+    
     #endregion
 }
