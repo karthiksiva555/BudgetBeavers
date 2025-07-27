@@ -50,8 +50,12 @@ public class UserService(IUserRepository userRepository, IPasswordService passwo
         await userRepository.DeleteAsync(user);
     }
 
-    public ValueTask<UserDto?> GetByIdAsync(Guid id)
+    public async ValueTask<UserDto?> GetByIdAsync(Guid id)
     {
-        throw new NotImplementedException();
+        Guard.AgainstEmptyGuid(id, nameof(id));
+        var user = await userRepository.GetByIdAsync(id);
+        Guard.AgainstKeyNotFound(user, id, nameof(id));
+        
+        return user.ToDto();
     }
 }
