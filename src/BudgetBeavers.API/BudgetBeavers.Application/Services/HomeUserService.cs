@@ -7,9 +7,9 @@ namespace BudgetBeavers.Application.Services;
 
 public class HomeUserService(IHomeUserRepository homeUserRepository): IHomeUserService
 {
-    public Task<HomeUserDto> AddAsync(CreateHomeUserDto createUserDto)
+    public Task<HomeUserDto> AddAsync(CreateHomeUserDto createHomeUserDto)
     {
-        Guard.AgainstNull(createUserDto, nameof(createUserDto));
+        Guard.AgainstNull(createHomeUserDto, nameof(createHomeUserDto));
         throw new NotImplementedException();
     }
 
