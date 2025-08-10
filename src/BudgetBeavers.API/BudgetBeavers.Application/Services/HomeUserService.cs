@@ -7,13 +7,16 @@ namespace BudgetBeavers.Application.Services;
 
 public class HomeUserService(IHomeUserRepository homeUserRepository): IHomeUserService
 {
-    public Task<HomeUserDto> AddAsync(CreateHomeUserDto createHomeUserDto)
+    public async Task<HomeUserDto> AddAsync(CreateHomeUserDto createHomeUserDto)
     {
         Guard.AgainstNull(createHomeUserDto, nameof(createHomeUserDto));
         Guard.AgainstEmptyGuid(createHomeUserDto.HomeId, nameof(createHomeUserDto.HomeId));
         Guard.AgainstEmptyGuid(createHomeUserDto.UserId, nameof(createHomeUserDto.UserId));
         Guard.AgainstEmptyGuid(createHomeUserDto.RoleId, nameof(createHomeUserDto.RoleId));
-        throw new NotImplementedException();
+        
+        var homeUser = createHomeUserDto.ToEntity();
+        var createdHomeUser = await homeUserRepository.AddAsync(homeUser);
+        return createdHomeUser.ToDto();
     }
 
     public Task<HomeUserDto> UpdateAsync(Guid id, UpdateHomeUserDto updateHomeDto)
