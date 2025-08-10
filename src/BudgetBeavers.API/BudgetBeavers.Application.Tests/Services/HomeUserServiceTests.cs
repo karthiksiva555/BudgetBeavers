@@ -5,17 +5,18 @@ using FluentAssertions;
 using Moq;
 using Xunit;
 using AutoFixture;
+using BudgetBeavers.Core.Entities;
 
 namespace BudgetBeavers.Application.Tests.Services;
 
 public class HomeUserServiceTests : TestBase
 {
-    private readonly Mock<IHomeUserRepository> _homeRepositoryMock = new();
+    private readonly Mock<IHomeUserRepository> _homeUserRepositoryMock = new();
     private readonly HomeUserService _homeUserService;
 
     public HomeUserServiceTests()
     {
-        _homeUserService = new HomeUserService(_homeRepositoryMock.Object);
+        _homeUserService = new HomeUserService(_homeUserRepositoryMock.Object);
     }
 
     #region AddAsync
@@ -63,6 +64,25 @@ public class HomeUserServiceTests : TestBase
         await act.Should().ThrowAsync<ArgumentException>()
             .WithParameterName(nameof(createHomeUserDto.RoleId))
             .Where(e => e.Message.Contains("cannot be empty."));
+    }
+    
+    [Fact]
+    public async Task AddAsync_CreateHomeUserDtoIsValid_SavesHomeUserAndReturnsDtoAsync()
+    {
+        // Arrange
+        var createHomeUserDto = Fixture.Create<CreateHomeUserDto>();
+        var homeUser = createHomeUserDto.ToEntity();
+        var expectedHomeUserDto = homeUser.ToDto();
+
+        _homeUserRepositoryMock.Setup(repo => repo.AddAsync(It.IsAny<HomeUser>()))
+            .ReturnsAsync(homeUser);
+
+        // Act
+        var result = await _homeUserService.AddAsync(createHomeUserDto);
+
+        // Assert
+        result.Should().BeEquivalentTo(expectedHomeUserDto);
+        _homeUserRepositoryMock.Verify(repo => repo.AddAsync(It.IsAny<HomeUser>()), Times.Once);
     }
 
     #endregion
