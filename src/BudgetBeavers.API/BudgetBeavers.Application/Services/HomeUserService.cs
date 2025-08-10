@@ -10,6 +10,9 @@ public class HomeUserService(IHomeUserRepository homeUserRepository): IHomeUserS
     public Task<HomeUserDto> AddAsync(CreateHomeUserDto createHomeUserDto)
     {
         Guard.AgainstNull(createHomeUserDto, nameof(createHomeUserDto));
+        Guard.AgainstEmptyGuid(createHomeUserDto.HomeId, nameof(createHomeUserDto.HomeId));
+        Guard.AgainstEmptyGuid(createHomeUserDto.UserId, nameof(createHomeUserDto.UserId));
+        Guard.AgainstEmptyGuid(createHomeUserDto.RoleId, nameof(createHomeUserDto.RoleId));
         throw new NotImplementedException();
     }
 
