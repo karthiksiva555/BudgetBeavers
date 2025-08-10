@@ -1,5 +1,6 @@
 using BudgetBeavers.Application.Dtos.HomeUserDtos;
 using BudgetBeavers.Application.Interfaces;
+using BudgetBeavers.Application.Utilities;
 using BudgetBeavers.Core.Interfaces;
 
 namespace BudgetBeavers.Application.Services;
@@ -8,6 +9,7 @@ public class HomeUserService(IHomeUserRepository homeUserRepository): IHomeUserS
 {
     public Task<HomeUserDto> AddAsync(CreateHomeUserDto createUserDto)
     {
+        Guard.AgainstNull(createUserDto, nameof(createUserDto));
         throw new NotImplementedException();
     }
 
