@@ -9,11 +9,11 @@ public class UserService(IUserRepository userRepository, IPasswordService passwo
 {
     public async Task<UserDto> AddAsync(CreateUserDto createUserDto)
     {
-        Guard.AgainstNull(createUserDto, nameof(createUserDto));
-        Guard.AgainstNullOrWhiteSpace(createUserDto.FirstName, nameof(createUserDto.FirstName));
-        Guard.AgainstNullOrWhiteSpace(createUserDto.LastName, nameof(createUserDto.LastName));
-        Guard.AgainstNullOrWhiteSpace(createUserDto.Email, nameof(createUserDto.Email));
-        Guard.AgainstNullOrWhiteSpace(createUserDto.Password, nameof(createUserDto.Password));
+        Guard.AgainstNull(createUserDto);
+        Guard.AgainstNullOrWhiteSpace(createUserDto.FirstName);
+        Guard.AgainstNullOrWhiteSpace(createUserDto.LastName);
+        Guard.AgainstNullOrWhiteSpace(createUserDto.Email);
+        Guard.AgainstNullOrWhiteSpace(createUserDto.Password);
         
         var user = createUserDto.ToEntity();
         user.PasswordHash = passwordService.HashPassword(createUserDto.Password);
@@ -24,13 +24,13 @@ public class UserService(IUserRepository userRepository, IPasswordService passwo
 
     public async Task<UserDto> UpdateAsync(Guid id, UpdateUserDto updateUserDto)
     {
-        Guard.AgainstNull(updateUserDto, nameof(updateUserDto));
-        Guard.AgainstEmptyGuid(id, nameof(id));
-        Guard.AgainstNullOrWhiteSpace(updateUserDto.FirstName, nameof(updateUserDto.FirstName));
-        Guard.AgainstNullOrWhiteSpace(updateUserDto.LastName, nameof(updateUserDto.LastName));
+        Guard.AgainstNull(updateUserDto);
+        Guard.AgainstEmptyGuid(id);
+        Guard.AgainstNullOrWhiteSpace(updateUserDto.FirstName);
+        Guard.AgainstNullOrWhiteSpace(updateUserDto.LastName);
         
         var existingUser = await userRepository.GetByIdAsync(id);
-        Guard.AgainstKeyNotFound(existingUser, id, nameof(id));
+        Guard.AgainstKeyNotFound(existingUser, id);
         
         existingUser.FirstName = updateUserDto.FirstName;
         existingUser.LastName = updateUserDto.LastName;
@@ -43,18 +43,18 @@ public class UserService(IUserRepository userRepository, IPasswordService passwo
 
     public async Task DeleteAsync(Guid id)
     {
-        Guard.AgainstEmptyGuid(id, nameof(id));
+        Guard.AgainstEmptyGuid(id);
         var user = await userRepository.GetByIdAsync(id);
-        Guard.AgainstKeyNotFound(user, id, nameof(id));
+        Guard.AgainstKeyNotFound(user, id);
         
         await userRepository.DeleteAsync(user);
     }
 
     public async ValueTask<UserDto?> GetByIdAsync(Guid id)
     {
-        Guard.AgainstEmptyGuid(id, nameof(id));
+        Guard.AgainstEmptyGuid(id);
         var user = await userRepository.GetByIdAsync(id);
-        Guard.AgainstKeyNotFound(user, id, nameof(id));
+        Guard.AgainstKeyNotFound(user, id);
         
         return user.ToDto();
     }

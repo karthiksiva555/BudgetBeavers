@@ -11,15 +11,14 @@ public class GuardTests
     {
         // Arrange
         object? value = null;
-        const string parameterName = "testParameter";
 
         // Act
-        Action act = () => Guard.AgainstNull(value, parameterName);
+        var act = () => Guard.AgainstNull(value);
 
         // Assert
         act.Should()
             .Throw<ArgumentNullException>()
-            .WithParameterName(parameterName);
+            .WithParameterName(nameof(value));
     }
 
     [Fact]
@@ -27,10 +26,9 @@ public class GuardTests
     {
         // Arrange
         var value = new object();
-        const string parameterName = "testParameter";
 
         // Act
-        var act = () => Guard.AgainstNull(value, parameterName);
+        var act = () => Guard.AgainstNull(value);
         
         // Assert
         act.Should().NotThrow();
@@ -42,17 +40,14 @@ public class GuardTests
     [InlineData("   ")]
     public void AgainstNullOrWhiteSpace_InvalidValue_ThrowsArgumentException(string? value)
     {
-        // Arrange
-        const string paramName = "testParam";
-        
         // Act
-        var act = () => Guard.AgainstNullOrWhiteSpace(value, paramName);
+        var act = () => Guard.AgainstNullOrWhiteSpace(value);
 
         // Assert
         act.Should()
             .Throw<ArgumentException>()
-            .Where(e => e.Message.Contains($"{paramName} cannot be null or whitespace."))
-            .WithParameterName(paramName);
+            .Where(e => e.Message.Contains($"{nameof(value)} cannot be null or whitespace."))
+            .WithParameterName(nameof(value));
     }
 
     [Fact]
@@ -60,10 +55,9 @@ public class GuardTests
     {
         // Arrange
         const string validValue = "valid";
-        const string paramName = "testParam";
         
         // Act
-        var act = () => Guard.AgainstNullOrWhiteSpace(validValue, paramName);
+        var act = () => Guard.AgainstNullOrWhiteSpace(validValue);
 
         // Assert
         act.Should().NotThrow();
@@ -74,16 +68,15 @@ public class GuardTests
     {
         // Arrange
         var emptyGuid = Guid.Empty;
-        const string paramName = "testId";
         
         // Act
-        var act = () => Guard.AgainstEmptyGuid(emptyGuid, paramName);
+        var act = () => Guard.AgainstEmptyGuid(emptyGuid);
 
         // Assert
         act.Should()
             .Throw<ArgumentException>()
-            .Where(e => e.Message.Contains($"{paramName} cannot be empty."))
-            .WithParameterName(paramName);
+            .Where(e => e.Message.Contains($"{nameof(emptyGuid)} cannot be empty."))
+            .WithParameterName(nameof(emptyGuid));
     }
 
     [Fact]
@@ -91,10 +84,9 @@ public class GuardTests
     {
         // Arrange
         var validGuid = Guid.NewGuid();
-        const string paramName = "testId";
         
         // Act
-        var act = () => Guard.AgainstEmptyGuid(validGuid, paramName);
+        var act = () => Guard.AgainstEmptyGuid(validGuid);
 
         // Assert
         act.Should().NotThrow();
@@ -106,14 +98,13 @@ public class GuardTests
         // Arrange
         object? obj = null;
         var id = Guid.NewGuid();
-        const string keyName = "TestKey";
 
         // Act
-        var act = () => Guard.AgainstKeyNotFound(obj, id, keyName);
+        var act = () => Guard.AgainstKeyNotFound(obj, id);
 
         act.Should()
             .Throw<KeyNotFoundException>()
-            .WithMessage($"No entity found with the provided {keyName}: {id}.");
+            .WithMessage($"No entity found with the provided {nameof(id)}: {id}.");
     }
 
     [Fact]
@@ -122,10 +113,9 @@ public class GuardTests
         // Arrange
         var obj = new object();
         var id = Guid.NewGuid();
-        const string keyName = "TestKey";
 
         // Act
-        var act = () => Guard.AgainstKeyNotFound(obj, id, keyName);
+        var act = () => Guard.AgainstKeyNotFound(obj, id);
 
         act.Should().NotThrow();
     }

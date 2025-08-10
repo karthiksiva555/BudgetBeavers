@@ -9,10 +9,10 @@ public class HomeUserService(IHomeUserRepository homeUserRepository): IHomeUserS
 {
     public async Task<HomeUserDto> AddAsync(CreateHomeUserDto createHomeUserDto)
     {
-        Guard.AgainstNull(createHomeUserDto, nameof(createHomeUserDto));
-        Guard.AgainstEmptyGuid(createHomeUserDto.HomeId, nameof(createHomeUserDto.HomeId));
-        Guard.AgainstEmptyGuid(createHomeUserDto.UserId, nameof(createHomeUserDto.UserId));
-        Guard.AgainstEmptyGuid(createHomeUserDto.RoleId, nameof(createHomeUserDto.RoleId));
+        Guard.AgainstNull(createHomeUserDto);
+        Guard.AgainstEmptyGuid(createHomeUserDto.HomeId);
+        Guard.AgainstEmptyGuid(createHomeUserDto.UserId);
+        Guard.AgainstEmptyGuid(createHomeUserDto.RoleId);
         
         var homeUser = createHomeUserDto.ToEntity();
         var createdHomeUser = await homeUserRepository.AddAsync(homeUser);
@@ -21,13 +21,13 @@ public class HomeUserService(IHomeUserRepository homeUserRepository): IHomeUserS
 
     public async Task<HomeUserDto> UpdateAsync(Guid id, UpdateHomeUserDto updateHomeUserDto)
     {
-        Guard.AgainstEmptyGuid(id, nameof(id));
-        Guard.AgainstNull(updateHomeUserDto, nameof(updateHomeUserDto));
-        Guard.AgainstEmptyGuid(updateHomeUserDto.UserId, nameof(updateHomeUserDto.UserId));
-        Guard.AgainstEmptyGuid(updateHomeUserDto.RoleId, nameof(updateHomeUserDto.RoleId));
+        Guard.AgainstEmptyGuid(id);
+        Guard.AgainstNull(updateHomeUserDto);
+        Guard.AgainstEmptyGuid(updateHomeUserDto.UserId);
+        Guard.AgainstEmptyGuid(updateHomeUserDto.RoleId);
         
         var existingHomeUser = await homeUserRepository.GetByIdAsync(id);
-        Guard.AgainstKeyNotFound(existingHomeUser, id, nameof(id));
+        Guard.AgainstKeyNotFound(existingHomeUser, id);
         
         existingHomeUser.UserId = updateHomeUserDto.UserId;
         existingHomeUser.RoleId = updateHomeUserDto.RoleId;
