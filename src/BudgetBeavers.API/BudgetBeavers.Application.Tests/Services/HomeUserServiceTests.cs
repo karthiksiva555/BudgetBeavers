@@ -102,7 +102,7 @@ public class HomeUserServiceTests : TestBase
     }
 
     [Fact]
-    public async Task UpdateAsync_UpdateHomeUserDtoIsNull_ThrowsArgumentExceptionAsync()
+    public async Task UpdateAsync_UpdateHomeUserDtoIsNull_ThrowsArgumentNullExceptionAsync()
     {
         Func<Task> act = async () => await _homeUserService.UpdateAsync(Guid.NewGuid(), null!);
         
@@ -146,7 +146,7 @@ public class HomeUserServiceTests : TestBase
         Func<Task> act = async () => await _homeUserService.UpdateAsync(homeUserId, updateHomeUserDto);
 
         await act.Should().ThrowAsync<KeyNotFoundException>()
-            .WithMessage($"No entity found with the provided key: {homeUserId}.");
+            .WithMessage($"No entity found with the provided id: {homeUserId}.");
     }
     
     [Fact]

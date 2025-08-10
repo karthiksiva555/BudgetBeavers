@@ -19,9 +19,21 @@ public class HomeUserService(IHomeUserRepository homeUserRepository): IHomeUserS
         return createdHomeUser.ToDto();
     }
 
-    public Task<HomeUserDto> UpdateAsync(Guid id, UpdateHomeUserDto updateHomeDto)
+    public async Task<HomeUserDto> UpdateAsync(Guid id, UpdateHomeUserDto updateHomeUserDto)
     {
-        throw new NotImplementedException();
+        Guard.AgainstEmptyGuid(id, nameof(id));
+        Guard.AgainstNull(updateHomeUserDto, nameof(updateHomeUserDto));
+        Guard.AgainstEmptyGuid(updateHomeUserDto.UserId, nameof(updateHomeUserDto.UserId));
+        Guard.AgainstEmptyGuid(updateHomeUserDto.RoleId, nameof(updateHomeUserDto.RoleId));
+        
+        var existingHomeUser = await homeUserRepository.GetByIdAsync(id);
+        Guard.AgainstKeyNotFound(existingHomeUser, id, nameof(id));
+        
+        existingHomeUser.UserId = updateHomeUserDto.UserId;
+        existingHomeUser.RoleId = updateHomeUserDto.RoleId;
+        await homeUserRepository.UpdateAsync(existingHomeUser);
+        
+        return existingHomeUser.ToDto();
     }
 
     public Task DeleteAsync(Guid id)
