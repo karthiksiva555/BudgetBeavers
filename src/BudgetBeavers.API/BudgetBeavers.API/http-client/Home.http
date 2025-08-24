@@ -1,4 +1,4 @@
-@baseUrl = {{host}}/api/home
+@baseUrl = {{host}}/api/homes
 
 ### Create A new Home
 POST {{baseUrl}}

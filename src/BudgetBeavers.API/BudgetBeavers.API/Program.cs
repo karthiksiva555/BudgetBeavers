@@ -32,6 +32,9 @@ public class Program
         
         builder.Services.AddScoped<IPasswordService, PasswordService>();
 
+        builder.Services.AddScoped<IHomeUserRepository, HomeUserRepository>();
+        builder.Services.AddScoped<IHomeUserService, HomeUserService>();
+        
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.

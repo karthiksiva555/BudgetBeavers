@@ -1,0 +1,92 @@
+@baseUrl = {{host}}/api/homeusers
+@adminRoleId = e0a3e06a-5e88-4f57-9481-35ab6c71205a
+@viewerRoleId = f4b1c4a9-0f93-4d0a-a7b7-cd3cbe58f937
+
+### Setup - Create Test Home
+POST {{host}}/api/homes
+Content-Type: application/json
+
+{
+    "name": "Test Home"
+}
+
+> {% client.global.set("homeId", response.body.id) %}
+
+### Setup - Create Test User 1
+POST {{host}}/api/users
+Content-Type: application/json
+
+{
+    "firstName": "Test",
+    "lastName": "User1",
+    "email": "test1@example.com",
+    "password": "TestPassword123!",
+    "phoneNumber": "+1234567890"
+}
+
+> {% client.global.set("userIdOne", response.body.id) %}
+
+### Setup - Create Test User2
+POST {{host}}/api/users
+Content-Type: application/json
+
+{
+    "firstName": "Test",
+    "lastName": "User2",
+    "email": "test2@example.com",
+    "password": "TestPassword234!",
+    "phoneNumber": "+1234567890"
+}
+
+> {% client.global.set("userIdTwo", response.body.id) %}
+
+### Add Member to Home
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "userId": "{{userIdOne}}",
+  "homeId": "{{homeId}}",
+  "roleId": "{{adminRoleId}}"
+}
+
+> {% client.global.set("homeUserId", response.body.id) %}
+
+### Get HomeUser by ID
+GET {{baseUrl}}/{{homeUserId}}
+Accept: application/json
+
+### Update HomeUser Role
+PUT {{baseUrl}}/{{homeUserId}}
+Content-Type: application/json
+
+{
+  "roleId": "{{viewerRoleId}}"
+}
+
+### Add Another Member to Home
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "userId": "{{userIdTwo}}",
+  "homeId": "{{homeId}}",
+  "roleId": "{{adminRoleId}}"
+}
+
+### Get Members by Home Id
+GET {{baseUrl}}/members/{{homeId}}
+Accept: application/json
+
+### Remove Member from Home
+DELETE {{baseUrl}}/{{homeUserId}}
+
+### Cleanup - Remove Test Data
+### Remove Test Home
+DELETE {{host}}/api/homes/{{homeId}}
+
+### Remove Test User 1
+DELETE{{host}}/api/users/{{userIdOne}}
+
+### Remove Test User 2
+DELETE {{host}}/api/users/{{userIdTwo}}

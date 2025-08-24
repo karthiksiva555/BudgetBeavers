@@ -6,7 +6,7 @@ namespace BudgetBeavers.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class HomeUserController(IHomeUserService homeUserService) : ControllerBase
+public class HomeUsersController(IHomeUserService homeUserService) : ControllerBase
 {
     [HttpPost]
     public async Task<IActionResult> AddMemberToHome([FromBody] CreateHomeUserDto createHomeUserDto)
@@ -15,7 +15,7 @@ public class HomeUserController(IHomeUserService homeUserService) : ControllerBa
         return CreatedAtAction(nameof(GetMembersByHomeId), new { homeId = createdHomeUser.HomeId }, createdHomeUser);
     }
     
-    [HttpPut]
+    [HttpPut("{id:guid}")]
     public async Task<IActionResult> UpdateHomeUser(Guid id, [FromBody] UpdateHomeUserDto updateHomeUserDto)
     {
         var updatedHomeUser = await homeUserService.UpdateAsync(id, updateHomeUserDto);
@@ -29,7 +29,7 @@ public class HomeUserController(IHomeUserService homeUserService) : ControllerBa
         return NoContent();
     }
 
-    [HttpGet]
+    [HttpGet("{homeUserId:guid}")]
     public async Task<IActionResult> GetHomeUserById(Guid homeUserId)
     {
         var homeUser = await homeUserService.GetByIdAsync(homeUserId);

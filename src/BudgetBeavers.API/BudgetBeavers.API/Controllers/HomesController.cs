@@ -6,7 +6,7 @@ namespace BudgetBeavers.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class HomeController(IHomeService homeService) : ControllerBase
+public class HomesController(IHomeService homeService) : ControllerBase
 {
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetHomeById(Guid id)
