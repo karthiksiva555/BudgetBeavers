@@ -110,30 +110,6 @@ public class HomeUserServiceTests : TestBase
         await act.Should().ThrowAsync<ArgumentNullException>()
             .WithParameterName("updateHomeUserDto");
     }
-
-    [Fact]
-    public async Task UpdateAsync_UserIdIsInvalid_ThrowsArgumentExceptionAsync()
-    {
-        var updateHomeUserDto = Fixture.Build<UpdateHomeUserDto>().With(hu => hu.UserId, Guid.Empty).Create();
-        
-        Func<Task> act = async () => await _homeUserService.UpdateAsync(Guid.NewGuid(), updateHomeUserDto);
-        
-        await act.Should().ThrowAsync<ArgumentException>()
-            .WithParameterName(nameof(updateHomeUserDto.UserId))
-            .Where(e => e.Message.Contains("cannot be empty."));
-    }
-    
-    [Fact]
-    public async Task UpdateAsync_RoleIdIsInvalid_ThrowsArgumentExceptionAsync()
-    {
-        var updateHomeUserDto = Fixture.Build<UpdateHomeUserDto>().With(hu => hu.RoleId, Guid.Empty).Create();
-        
-        Func<Task> act = async () => await _homeUserService.UpdateAsync(Guid.NewGuid(), updateHomeUserDto);
-        
-        await act.Should().ThrowAsync<ArgumentException>()
-            .WithParameterName(nameof(updateHomeUserDto.RoleId))
-            .Where(e => e.Message.Contains("cannot be empty."));
-    }
     
     [Fact]
     public async Task UpdateAsync_HomeUserDoesNotExist_ThrowsKeyNotFoundExceptionAsync()
@@ -151,16 +127,36 @@ public class HomeUserServiceTests : TestBase
     }
     
     [Fact]
+    public async Task UpdateAsync_UserIdAndRoleIdAreNull_ThrowsArgumentExceptionAsync()
+    {
+        var updateHomeUserDto = Fixture.Build<UpdateHomeUserDto>()
+            .With(hu => hu.UserId, (Guid?)null)
+            .With(hu => hu.RoleId, (Guid?)null)
+            .Create();
+        
+        Func<Task> act = async () => await _homeUserService.UpdateAsync(Guid.NewGuid(), updateHomeUserDto);
+        
+        await act.Should().ThrowAsync<ArgumentException>()
+            .WithParameterName(nameof(updateHomeUserDto))
+            .Where(e => e.Message.Contains("At least one property (RoleId or UserId) must be provided for update."));
+    }
+    
+    [Fact]
     public async Task UpdateAsync_ValidHomeUserIdAndDto_UpdatesHomeUserAndReturnsDtoAsync()
     {
         // Arrange
         var homeUserId = Guid.NewGuid();
-        var updateHomeUserDto = Fixture.Create<UpdateHomeUserDto>();
+        var userId = Guid.NewGuid();
+        var roleId = Guid.NewGuid();
+        var updateHomeUserDto = Fixture.Build<UpdateHomeUserDto>()
+            .With(hu => hu.UserId, userId)
+            .With(hu => hu.RoleId, roleId)
+            .Create();
         var existingHomeUser = new HomeUser
         {
             Id = homeUserId,
-            UserId = updateHomeUserDto.UserId,
-            RoleId = updateHomeUserDto.RoleId
+            UserId = userId,
+            RoleId = roleId
         };
 
         _homeUserRepositoryMock.Setup(repo => repo.GetByIdAsync(homeUserId))
@@ -175,8 +171,8 @@ public class HomeUserServiceTests : TestBase
         // Assert
         result.Should().NotBeNull();
         result.Id.Should().Be(homeUserId);
-        result.UserId.Should().Be(updateHomeUserDto.UserId);
-        result.RoleId.Should().Be(updateHomeUserDto.RoleId);
+        result.UserId.Should().Be(userId);
+        result.RoleId.Should().Be(roleId);
         
         _homeUserRepositoryMock.Verify(repo => repo.UpdateAsync(It.IsAny<HomeUser>()), Times.Once);
     }

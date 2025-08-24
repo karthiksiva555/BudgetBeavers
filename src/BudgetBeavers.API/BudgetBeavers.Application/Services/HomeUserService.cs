@@ -24,14 +24,16 @@ public class HomeUserService(IHomeUserRepository homeUserRepository): IHomeUserS
     {
         Guard.AgainstEmptyGuid(id);
         Guard.AgainstNull(updateHomeUserDto);
-        Guard.AgainstEmptyGuid(updateHomeUserDto.UserId);
-        Guard.AgainstEmptyGuid(updateHomeUserDto.RoleId);
+        if (updateHomeUserDto.RoleId is null && updateHomeUserDto.UserId is null)
+        {
+            throw new ArgumentException("At least one property (RoleId or UserId) must be provided for update.", nameof(updateHomeUserDto));
+        }
         
         var existingHomeUser = await homeUserRepository.GetByIdAsync(id);
         Guard.AgainstKeyNotFound(existingHomeUser, id);
-        
-        existingHomeUser.UserId = updateHomeUserDto.UserId;
-        existingHomeUser.RoleId = updateHomeUserDto.RoleId;
+
+        existingHomeUser.UserId = updateHomeUserDto.UserId ?? existingHomeUser.UserId;
+        existingHomeUser.RoleId = updateHomeUserDto.RoleId ?? existingHomeUser.RoleId;
         await homeUserRepository.UpdateAsync(existingHomeUser);
         
         return existingHomeUser.ToDto();
