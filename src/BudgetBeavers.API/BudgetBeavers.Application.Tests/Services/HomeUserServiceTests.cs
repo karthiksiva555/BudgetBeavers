@@ -181,4 +181,47 @@ public class HomeUserServiceTests : TestBase
     }
     
     #endregion
+
+    #region DeleteAsync
+
+    [Fact]
+    public async Task DeleteAsync_IdIsInvalid_ThrowsArgumentExceptionAsync()
+    {
+        Func<Task> action = async () => await _homeUserService.DeleteAsync(Guid.Empty);
+        
+        await action.Should().ThrowAsync<ArgumentException>()
+            .WithParameterName("id")
+            .Where(e => e.Message.Contains("cannot be empty."));
+    }
+    
+    [Fact]
+    public async Task DeleteAsync_HomeUserNotFound_ThrowsKeyNotFoundExceptionAsync()
+    {
+        var homeUserId = Guid.NewGuid();
+       
+        _homeUserRepositoryMock.Setup(repo => repo.GetByIdAsync(homeUserId))
+            .ReturnsAsync((HomeUser?)null);
+        
+        Func<Task> action = async () => await _homeUserService.DeleteAsync(homeUserId);
+        
+        await action.Should().ThrowAsync<KeyNotFoundException>()
+            .WithMessage($"No entity found with the provided id: {homeUserId}.");
+    }
+
+    [Fact]
+    public async Task DeleteAsync_ValidId_DeletesHomeUserAsync()
+    {
+        var homeUserId = Guid.NewGuid();
+        var existingHomeUser = new HomeUser { Id = homeUserId };
+        _homeUserRepositoryMock.Setup(repo => repo.GetByIdAsync(homeUserId))
+            .ReturnsAsync(existingHomeUser);
+        _homeUserRepositoryMock.Setup(repo => repo.DeleteAsync(existingHomeUser))
+            .Returns(Task.CompletedTask);
+        
+        await _homeUserService.DeleteAsync(homeUserId);
+        
+        _homeUserRepositoryMock.Verify(repo => repo.DeleteAsync(existingHomeUser), Times.Once);
+    }
+
+    #endregion
 }
