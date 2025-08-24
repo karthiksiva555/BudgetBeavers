@@ -224,4 +224,52 @@ public class HomeUserServiceTests : TestBase
     }
 
     #endregion
+    
+    #region GetByIdAsync
+    
+    [Fact]
+    public async Task GetByIdAsync_IdIsInvalid_ThrowsArgumentExceptionAsync()
+    {
+        Func<Task> act = async () => await _homeUserService.GetByIdAsync(Guid.Empty);
+        
+        await act.Should().ThrowAsync<ArgumentException>()
+            .WithParameterName("id")
+            .Where(e => e.Message.Contains("cannot be empty."));
+    }
+
+    [Fact]
+    public async Task GetByIdAsync_HomeUserNotFound_ThrowsKeyNotFoundExceptionAsync()
+    {
+        var homeUserId = Guid.NewGuid();
+        _homeUserRepositoryMock.Setup(repo => repo.GetByIdAsync(homeUserId))
+            .ReturnsAsync((HomeUser?)null);
+        
+        Func<Task> act = async () => await _homeUserService.GetByIdAsync(homeUserId);
+        
+        await act.Should().ThrowAsync<KeyNotFoundException>()
+            .WithMessage($"No entity found with the provided id: {homeUserId}.");
+    }
+
+    [Fact]
+    public async Task GetByIdAsync_ValidId_ReturnsHomeUserDtoAsync()
+    {
+        var homeUserId = Guid.NewGuid();
+        var existingHomeUser = new HomeUser
+        {
+            Id = homeUserId,
+            UserId = Guid.NewGuid(),
+            HomeId = Guid.NewGuid(),
+            RoleId = Guid.NewGuid()
+        };
+        var expectedDto = existingHomeUser.ToDto();
+        _homeUserRepositoryMock.Setup(repo => repo.GetByIdAsync(homeUserId))
+            .ReturnsAsync(existingHomeUser);
+        
+        var result = await _homeUserService.GetByIdAsync(homeUserId);
+        
+        result.Should().BeEquivalentTo(expectedDto);
+        _homeUserRepositoryMock.Verify(repo => repo.GetByIdAsync(homeUserId), Times.Once);
+    }
+
+    #endregion
 }

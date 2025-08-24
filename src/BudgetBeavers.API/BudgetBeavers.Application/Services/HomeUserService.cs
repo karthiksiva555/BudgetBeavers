@@ -46,9 +46,14 @@ public class HomeUserService(IHomeUserRepository homeUserRepository): IHomeUserS
         await homeUserRepository.DeleteAsync(homeUser);
     }
 
-    public ValueTask<HomeUserDto?> GetByIdAsync(Guid id)
+    public async ValueTask<HomeUserDto?> GetByIdAsync(Guid id)
     {
-        throw new NotImplementedException();
+        Guard.AgainstEmptyGuid(id);
+        
+        var homeUser = await homeUserRepository.GetByIdAsync(id);
+        Guard.AgainstKeyNotFound(homeUser, id);
+        
+        return homeUser.ToDto();
     }
 
     public Task<IEnumerable<HomeUserDto>> GetMembersByHomeIdAsync(Guid homeId)
