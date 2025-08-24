@@ -8,12 +8,11 @@ public class HomeUserRepository(BudgetBeaversDbContext budgetBeaversDb) : Reposi
 {
     private readonly BudgetBeaversDbContext _budgetBeaversDb = budgetBeaversDb;
 
-    public Task<IEnumerable<User?>> GetMembersByHomeIdAsync(Guid homeId)
+    public async Task<IEnumerable<User?>> GetMembersByHomeIdAsync(Guid homeId)
     {
-        return _budgetBeaversDb.HomeUsers
+        return await _budgetBeaversDb.HomeUsers
             .Where(hu => hu.HomeId == homeId)
             .Select(hu => hu.User)
-            .ToListAsync()
-            .ContinueWith(task => task.Result.AsEnumerable());
+            .ToListAsync();
     }
 }

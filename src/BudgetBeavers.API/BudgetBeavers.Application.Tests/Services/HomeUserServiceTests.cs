@@ -5,6 +5,7 @@ using FluentAssertions;
 using Moq;
 using Xunit;
 using AutoFixture;
+using BudgetBeavers.Application.Dtos.UserDtos;
 using BudgetBeavers.Core.Entities;
 
 namespace BudgetBeavers.Application.Tests.Services;
@@ -271,5 +272,48 @@ public class HomeUserServiceTests : TestBase
         _homeUserRepositoryMock.Verify(repo => repo.GetByIdAsync(homeUserId), Times.Once);
     }
 
+    #endregion
+    
+    #region GetMembersByHomeIdAsync
+    
+    [Fact]
+    public async Task GetMembersByHomeIdAsync_HomeIdIsInvalid_ThrowsArgumentExceptionAsync()
+    {
+        Func<Task> act = async () => await _homeUserService.GetMembersByHomeIdAsync(Guid.Empty);
+        
+        await act.Should().ThrowAsync<ArgumentException>()
+            .WithParameterName("homeId")
+            .Where(e => e.Message.Contains("cannot be empty."));
+    }
+
+    [Fact]
+    public async Task GetMembersByHomeIdAsync_HomeDoesNotHaveMembers_ReturnsEmptyUserListAsync()
+    {
+        var homeId = Guid.NewGuid();
+        _homeUserRepositoryMock.Setup(repo => repo.GetMembersByHomeIdAsync(homeId))
+            .ReturnsAsync(new List<User?>());
+        
+        var result = await _homeUserService.GetMembersByHomeIdAsync(homeId);
+        
+        result.Should().BeEmpty();
+        _homeUserRepositoryMock.Verify(repo => repo.GetMembersByHomeIdAsync(homeId), Times.Once);
+    }
+    
+    [Fact]
+    public async Task GetMembersByHomeIdAsync_HomeIdHasAssociatedMembers_ReturnsUserListAsync()
+    {
+        var homeId = Guid.NewGuid();
+        var users = Fixture.Create<IEnumerable<User>>();
+        var userList = users.ToList();
+        var expectedUsers = userList.Select(u => u.ToDto());
+        _homeUserRepositoryMock.Setup(repo => repo.GetMembersByHomeIdAsync(homeId))
+            .ReturnsAsync(userList);
+        
+        var result = await _homeUserService.GetMembersByHomeIdAsync(homeId);
+        
+        result.Should().BeEquivalentTo(expectedUsers);
+        _homeUserRepositoryMock.Verify(repo => repo.GetMembersByHomeIdAsync(homeId), Times.Once);
+    }
+    
     #endregion
 }

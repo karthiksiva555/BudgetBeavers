@@ -1,4 +1,5 @@
 using BudgetBeavers.Application.Dtos.HomeUserDtos;
+using BudgetBeavers.Application.Dtos.UserDtos;
 using BudgetBeavers.Application.Interfaces;
 using BudgetBeavers.Application.Utilities;
 using BudgetBeavers.Core.Interfaces;
@@ -56,8 +57,12 @@ public class HomeUserService(IHomeUserRepository homeUserRepository): IHomeUserS
         return homeUser.ToDto();
     }
 
-    public Task<IEnumerable<HomeUserDto>> GetMembersByHomeIdAsync(Guid homeId)
+    public async Task<IEnumerable<UserDto>> GetMembersByHomeIdAsync(Guid homeId)
     {
-        throw new NotImplementedException();
+        Guard.AgainstEmptyGuid(homeId);
+        
+        var users = await homeUserRepository.GetMembersByHomeIdAsync(homeId);
+        
+        return users.Where(u => u != null).Select(u => u!.ToDto());
     }
 }
