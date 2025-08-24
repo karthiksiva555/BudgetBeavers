@@ -153,40 +153,6 @@ public class UserServiceTests : TestBase
             .Where(e => e.Message.Contains("cannot be empty."));
     }
 
-    [Xunit.Theory]
-    [InlineData(null)]
-    [InlineData("")]
-    public async Task UpdateAsync_FirstNameIsInvalid_ThrowsArgumentExceptionAsync(string? firstName)
-    {
-        // Arrange
-        var updateUserDto = Fixture.Build<UpdateUserDto>().With(u => u.FirstName, firstName).Create();
-        
-        // Act
-        Func<Task> act = async () => await _userService.UpdateAsync(Guid.NewGuid(), updateUserDto);
-        
-        // Assert
-        await act.Should().ThrowAsync<ArgumentException>()
-            .WithParameterName(nameof(updateUserDto.FirstName))
-            .Where(e => e.Message.Contains("cannot be null or whitespace."));
-    }
-    
-    [Xunit.Theory]
-    [InlineData(null)]
-    [InlineData("")]
-    public async Task UpdateAsync_LastNameIsInvalid_ThrowsArgumentExceptionAsync(string? lastName)
-    {
-        // Arrange
-        var updateUserDto = Fixture.Build<UpdateUserDto>().With(u => u.LastName, lastName).Create();
-        
-        // Act
-        Func<Task> act = async () => await _userService.UpdateAsync(Guid.NewGuid(), updateUserDto);
-        
-        // Assert
-        await act.Should().ThrowAsync<ArgumentException>()
-            .WithParameterName(nameof(updateUserDto.LastName))
-            .Where(e => e.Message.Contains("cannot be null or whitespace."));
-    }
-    
     [Fact]
     public async Task UpdateAsync_UserDoesNotExist_ThrowsKeyNotFoundExceptionAsync()
     {
@@ -194,7 +160,7 @@ public class UserServiceTests : TestBase
         var userId = Guid.NewGuid();
         
         _userRepository.Setup(repo => repo.GetByIdAsync(userId))
-            .ReturnsAsync((Core.Entities.User?)null);
+            .ReturnsAsync((User?)null);
         
         Func<Task> act = async () => await _userService.UpdateAsync(userId, updateUserDto);
         
@@ -203,12 +169,37 @@ public class UserServiceTests : TestBase
     }
 
     [Fact]
+    public async Task UpdateAsync_AllInputValuesAreNull_ThrowsArgumentExceptionAsync()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var updateUserDto = Fixture.Build<UpdateUserDto>()
+            .With(u => u.FirstName, (string?)null)
+            .With(u => u.LastName, (string?)null)
+            .With(u => u.Email, (string?)null)
+            .With(u => u.PhoneNumber, (string?)null)
+            .Create();
+        var existingUser = Fixture.Build<User>().With(u => u.Id, userId).Create();
+
+        _userRepository.Setup(u => u.GetByIdAsync(userId))
+            .ReturnsAsync(existingUser);
+        
+        // Act
+        Func<Task> act = async () => await _userService.UpdateAsync(userId, updateUserDto);
+        
+        // Assert
+        await act.Should().ThrowAsync<ArgumentException>()
+            .WithParameterName(nameof(updateUserDto))
+            .Where(e => e.Message.Contains("At least one field must be provided for update."));
+    }
+    
+    [Fact]
     public async Task UpdateAsync_UserExists_ReturnsUpdatedUserDtoAsync()
     {
         // Arrange
         var userId = Guid.NewGuid();
         var updateUserDto = Fixture.Create<UpdateUserDto>();
-        var existingUser = Fixture.Build<Core.Entities.User>().With(u => u.Id, userId).Create();
+        var existingUser = Fixture.Build<User>().With(u => u.Id, userId).Create();
 
         _userRepository.Setup(u => u.GetByIdAsync(userId))
             .ReturnsAsync(existingUser);

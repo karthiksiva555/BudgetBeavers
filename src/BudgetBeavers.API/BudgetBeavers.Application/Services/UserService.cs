@@ -26,15 +26,17 @@ public class UserService(IUserRepository userRepository, IPasswordService passwo
     {
         Guard.AgainstNull(updateUserDto);
         Guard.AgainstEmptyGuid(id);
-        Guard.AgainstNullOrWhiteSpace(updateUserDto.FirstName);
-        Guard.AgainstNullOrWhiteSpace(updateUserDto.LastName);
         
         var existingUser = await userRepository.GetByIdAsync(id);
         Guard.AgainstKeyNotFound(existingUser, id);
         
-        existingUser.FirstName = updateUserDto.FirstName;
-        existingUser.LastName = updateUserDto.LastName;
-        existingUser.PhoneNumber = updateUserDto.PhoneNumber;
+        if (updateUserDto.FirstName is null && updateUserDto.LastName is null && updateUserDto.Email is null && updateUserDto.PhoneNumber is null)
+            throw new ArgumentException("At least one field must be provided for update.", nameof(updateUserDto));
+        
+        existingUser.FirstName = updateUserDto.FirstName ?? existingUser.FirstName;
+        existingUser.LastName = updateUserDto.LastName ?? existingUser.LastName;
+        existingUser.Email = updateUserDto.Email ?? existingUser.Email;
+        existingUser.PhoneNumber = updateUserDto.PhoneNumber ?? existingUser.PhoneNumber;
         
         await userRepository.UpdateAsync(existingUser);
         
