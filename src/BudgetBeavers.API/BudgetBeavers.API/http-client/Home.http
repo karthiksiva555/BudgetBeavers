@@ -1,0 +1,32 @@
+@baseUrl = {{host}}/api/home
+
+### Create A new Home
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "name": "My First Home"
+}
+
+> {% 
+    client.global.set("createdHomeId", response.body.id);
+%}
+
+### Get Home by ID
+GET {{baseUrl}}/{{createdHomeId}}
+Accept: application/json
+
+### Update Home by ID
+PUT {{baseUrl}}/{{createdHomeId}}
+Content-Type: application/json
+
+{
+  "name": "My Updated Home"
+}
+
+### Delete Home by ID
+DELETE {{baseUrl}}/{{createdHomeId}}
+
+### Get Deleted Home by ID
+GET {{baseUrl}}/{{createdHomeId}}
+Accept: application/json
