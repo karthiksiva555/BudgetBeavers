@@ -1,0 +1,46 @@
+@baseUrl = {{host}}/api/users
+
+### Create A new User
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "email": "john.doe@example.com",
+  "password": "SecurePassword123!",
+  "phoneNumber": "123-456-7890"
+}
+
+> {%
+    client.global.set("createdUserId", response.body.id);
+%}
+
+### Get Created User
+GET {{baseUrl}}/{{createdUserId}}
+Accept: application/json
+
+### Update Created User
+PUT {{baseUrl}}/{{createdUserId}}
+Content-Type: application/json
+
+{
+  "firstName": "John",
+  "lastName": "Smith",
+  "email": "john.smith@example.com",
+  "phoneNumber": "987-654-3210"
+}
+
+### Update User With Empty Fields
+PUT {{baseUrl}}/{{createdUserId}}
+Content-Type: application/json
+
+{  
+}
+
+### Delete Created User
+DELETE {{baseUrl}}/{{createdUserId}}
+
+### Verify User Deleted
+GET {{baseUrl}}/{{createdUserId}}
+Accept: application/json
