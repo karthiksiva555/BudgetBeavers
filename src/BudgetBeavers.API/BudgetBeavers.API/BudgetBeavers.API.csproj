@@ -5,6 +5,7 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
       <UserSecretsId>c83b9b67-f35e-4794-bef7-89b2d00cdba2</UserSecretsId>
+      <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
     <ItemGroup>
@@ -18,6 +19,12 @@
     <ItemGroup>
       <ProjectReference Include="..\BudgetBeavers.Application\BudgetBeavers.Application.csproj" />
       <ProjectReference Include="..\BudgetBeavers.Persistence\BudgetBeavers.Persistence.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="..\.dockerignore">
+        <Link>.dockerignore</Link>
+      </Content>
     </ItemGroup>
 
 </Project>

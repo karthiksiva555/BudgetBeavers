@@ -1,5 +1,17 @@
 
 services:
+  api:
+    build:
+      context: ../src
+      dockerfile: BudgetBeavers.API/BudgetBeavers.API/Dockerfile
+    container_name: budgetbeavers_api
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    depends_on:
+      - database
+
   database:
     image: postgres:17.4
     container_name: budgetbeavers_db
