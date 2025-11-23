@@ -6,7 +6,7 @@ services:
       dockerfile: BudgetBeavers.API/BudgetBeavers.API/Dockerfile
     container_name: budgetbeavers_api
     ports:
-      - "8080:8080"
+      - "5100:5000"
     env_file:
       - .env
     depends_on:

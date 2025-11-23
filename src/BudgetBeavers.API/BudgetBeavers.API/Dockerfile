@@ -1,15 +1,6 @@
-﻿FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
-ARG APP_UID=1000
-ARG APP_GID=1000
-ENV ASPNETCORE_URLS=http://+:8080
-WORKDIR /app
-EXPOSE 8080 8081
-
-# create non-root user and switch
-RUN groupadd -g ${APP_GID} appgroup \
-  && useradd -m -u ${APP_UID} -g appgroup appuser
-USER appuser
-
+﻿# ==========================
+# Stage 1: Build
+# ==========================
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
@@ -25,14 +16,27 @@ RUN echo "=== CURRENT WORKDIR (/src) AFTER COPY ===" && ls -a .
 WORKDIR "/src/BudgetBeavers.API/BudgetBeavers.API"
 RUN dotnet publish "./BudgetBeavers.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
+# ==========================
+# Stage 2: Final / Runtime
+# ==========================
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
+
+# Non-root user setup
 ARG APP_UID=1000
 ARG APP_GID=1000
-ENV ASPNETCORE_URLS=http://+:8080
 WORKDIR /app
-# create same user in final stage (so UID exists) and switch
 RUN groupadd -g ${APP_GID} appgroup \
   && useradd -m -u ${APP_UID} -g appgroup appuser
 USER appuser
+
+# Environment variable for ASP.NET Core
+ENV ASPNETCORE_URLS=http://+:5000
+
+# Expose the port your app listens on
+EXPOSE 5000
+
+# Copy the published output from build stage
 COPY --from=build /app/publish .
+
+# Set the entry point for the container
 ENTRYPOINT ["dotnet", "BudgetBeavers.API.dll"]
